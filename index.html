@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="es-AR">
 <head>
 <meta charset="UTF-8">
@@ -381,14 +381,25 @@
     display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
   }
 
-  @media (max-width:860px){
-    nav.cats{order:3;width:100%;justify-content:center;}
-    .header-inner{flex-wrap:wrap;}
-    .header-actions{flex-wrap:wrap;justify-content:flex-end;}
-    .search-box{order:4;flex-basis:100%;width:100%;min-width:0;margin-top:8px;}
+  @media (max-width:1180px){
+    .header-inner{flex-wrap:wrap;row-gap:12px;}
+    .logo{order:1;}
+    .header-actions{order:2;margin-left:auto;}
+    nav.cats{order:3;flex-basis:100%;width:100%;justify-content:center;}
+    .search-box{order:4;flex-basis:100%;width:100%;min-width:0;}
+  }
+  @media (max-width:760px){
     .hero{grid-template-columns:1fr;padding-top:40px;}
     .hero h1{font-size:38px;}
     .hero-visual{aspect-ratio:16/10;}
+  }  @media (max-width:480px){
+    .logo{font-size:18px;gap:8px;}
+    .logo-mark{width:32px;height:32px;}
+  }
+  @media (max-width:380px){
+    .logo{font-size:15px;gap:6px;}
+    .logo-mark{width:28px;height:28px;}
+    .header-inner{gap:10px;padding:16px 16px;}
   }
 </style>
 </head>
@@ -405,11 +416,11 @@
       </div>
       <button id="navContacto">Contacto</button>
     </nav>
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Buscar productos...">
+    </div>
     <div class="header-actions">
-      <div class="search-box">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="searchInput" placeholder="Buscar productos...">
-      </div>
       <div id="loginArea"></div>
       <button class="icon-btn" id="cartBtn" aria-label="Carrito">
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
