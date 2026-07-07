@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Almendra Home — Tienda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+  :root{
+    --crudo: #F4EEE2;
+    --arena: #E7DCC7;
+    --tierra: #A8683D;
+    --tierra-dark: #8A5230;
+    --musgo: #6B7355;
+    --cafe: #3D2F26;
+    --lino: #FBF8F2;
+    --linea: rgba(61,47,38,0.14);
+    --sombra: 0 10px 30px rgba(61,47,38,0.10);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--crudo);
+    color:var(--cafe);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;text-decoration:none;}
+  button{font-family:inherit;cursor:pointer;}
+  img{max-width:100%;display:block;}
+
+  /* ===== HEADER ===== */
+  header{
+    position:sticky;top:0;z-index:40;
+    background:rgba(244,238,226,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--linea);
+  }
+  .header-inner{
+    max-width:1180px;margin:0 auto;padding:16px 24px;
+    display:flex;align-items:center;justify-content:space-between;gap:20px;
+  }
+  .logo{
+    font-family:'Fraunces',serif;font-size:24px;font-weight:700;
+    color:var(--cafe);display:flex;align-items:center;gap:10px;white-space:nowrap;
+  }
+  .logo-mark{
+    width:34px;height:34px;border-radius:50%;
+    background:linear-gradient(135deg,var(--tierra),var(--musgo));
+    display:flex;align-items:center;justify-content:center;
+    color:var(--lino);font-size:16px;font-weight:700;
+  }
+  nav.cats{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+  nav.cats button{
+    background:none;border:none;padding:8px 14px;border-radius:999px;
+    font-size:14px;font-weight:600;color:var(--cafe);opacity:0.65;
+    transition:all .2s;
+  }
+  nav.cats button:hover{opacity:1;background:var(--arena);}
+  nav.cats button.active{opacity:1;background:var(--cafe);color:var(--lino);}
+
+  /* dropdown Productos */
+  .dropdown{position:relative;}
+  .dropdown-toggle{display:flex;align-items:center;gap:6px;}
+  .dropdown-toggle .arrow{font-size:10px;transition:transform .2s;}
+  .dropdown-toggle.open .arrow{transform:rotate(180deg);}
+  .dropdown-panel{
+    position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);
+    background:var(--lino);border:1px solid var(--linea);border-radius:14px;
+    box-shadow:var(--sombra);padding:8px;min-width:200px;z-index:50;
+    display:none;flex-direction:column;gap:2px;
+  }
+  .dropdown-panel.open{display:flex;}
+  .dropdown-panel button{
+    text-align:left;padding:10px 14px;border-radius:9px;font-size:14px;font-weight:500;
+    opacity:1;color:var(--cafe);width:100%;
+  }
+  .dropdown-panel button:hover{background:var(--arena);}
+  .dropdown-panel button.active{background:var(--cafe);color:var(--lino);}
+  .header-actions{display:flex;align-items:center;gap:10px;}
+  .search-box{
+    display:flex;align-items:center;gap:8px;
+    background:#ffffff;border:1.5px solid rgba(61,47,38,0.28);border-radius:999px;
+    padding:9px 16px;min-width:200px;
+  }
+  .search-box svg{flex-shrink:0;opacity:0.6;}
+  .search-box input{
+    border:none;background:none;outline:none;font-size:14px;width:100%;color:var(--cafe);
+  }
+  .icon-btn{
+    position:relative;background:#ffffff;border:1.5px solid rgba(61,47,38,0.28);
+    width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    transition:all .2s;
+  }
+  .icon-btn:hover{background:var(--arena);border-color:var(--tierra);}
+  .icon-btn svg{opacity:0.85;}
+  .badge-count{
+    position:absolute;top:-4px;right:-4px;background:var(--tierra);color:white;
+    font-size:11px;font-weight:700;min-width:18px;height:18px;border-radius:9px;
+    display:flex;align-items:center;justify-content:center;padding:0 4px;
+  }
+
+  /* ===== HERO ===== */
+  .hero{
+    max-width:1180px;margin:0 auto;padding:70px 24px 50px;
+    display:grid;grid-template-columns:1.1fr 0.9fr;gap:50px;align-items:center;
+  }
+  .hero-eyebrow{
+    font-size:13px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
+    color:var(--musgo);margin-bottom:14px;
+  }
+  .hero h1{font-size:52px;line-height:1.05;margin:0 0 20px;color:var(--cafe);}
+  .hero h1 em{font-style:italic;color:var(--tierra);}
+  .hero p{font-size:17px;line-height:1.6;color:rgba(61,47,38,0.75);max-width:480px;margin:0 0 28px;}
+  .hero-ctas{display:flex;gap:12px;}
+  .btn-primary{
+    background:var(--cafe);color:var(--lino);border:none;padding:14px 26px;
+    border-radius:10px;font-weight:600;font-size:15px;transition:all .2s;
+  }
+  .btn-primary:hover{background:var(--tierra-dark);transform:translateY(-1px);}
+  .btn-secondary{
+    background:none;border:1.5px solid var(--cafe);color:var(--cafe);
+    padding:14px 26px;border-radius:10px;font-weight:600;font-size:15px;transition:all .2s;
+  }
+  .btn-secondary:hover{background:var(--cafe);color:var(--lino);}
+  .hero-visual{
+    position:relative;aspect-ratio:4/3.2;border-radius:22px;overflow:hidden;
+    background:
+      repeating-linear-gradient(115deg, rgba(168,104,61,0.16) 0 3px, transparent 3px 26px),
+      linear-gradient(160deg, var(--arena), var(--tierra) 120%);
+    box-shadow:var(--sombra);
+  }
+  .hero-visual::before{
+    content:'';position:absolute;inset:0;
+    background:
+      radial-gradient(circle at 25% 20%, rgba(255,255,255,0.35), transparent 40%),
+      radial-gradient(circle at 80% 85%, rgba(61,47,38,0.25), transparent 45%);
+  }
+  .hero-visual .weave-label{
+    position:absolute;bottom:22px;left:22px;background:rgba(251,248,242,0.9);
+    padding:10px 16px;border-radius:12px;font-size:13px;font-weight:600;color:var(--cafe);
+  }
+
+  /* ===== SECTIONS ===== */
+  .section{max-width:1180px;margin:0 auto;padding:40px 24px;}
+  .section-head{
+    display:flex;align-items:baseline;justify-content:space-between;margin-bottom:26px;
+    flex-wrap:wrap;gap:10px;
+  }
+  .section-head h2{font-size:30px;margin:0;color:var(--cafe);}
+  .section-head .count-tag{font-size:14px;color:rgba(61,47,38,0.55);}
+
+  .grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:22px;
+  }
+  .card{
+    background:var(--lino);border:1px solid var(--linea);border-radius:16px;
+    overflow:hidden;display:flex;flex-direction:column;transition:all .25s;
+  }
+  .card:hover{box-shadow:var(--sombra);transform:translateY(-3px);}
+  .card-img{
+    aspect-ratio:1/0.85;position:relative;
+    background:linear-gradient(135deg, var(--arena), #d9c9a8);
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  .card-img::before{
+    content:'';position:absolute;inset:0;
+    background:repeating-linear-gradient(100deg, rgba(61,47,38,0.05) 0 2px, transparent 2px 18px);
+  }
+  .card-img .initials{
+    font-family:'Fraunces',serif;font-size:34px;font-weight:600;color:rgba(61,47,38,0.35);
+    z-index:1;
+  }
+  .stock-flag{
+    position:absolute;top:10px;left:10px;background:var(--musgo);color:white;
+    font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;letter-spacing:0.02em;
+  }
+  .stock-flag.low{background:var(--tierra);}
+  .no-stock-overlay{
+    position:absolute;inset:0;background:rgba(61,47,38,0.55);
+    display:flex;align-items:center;justify-content:center;z-index:2;
+  }
+  .no-stock-overlay span{
+    background:var(--cafe);color:var(--lino);font-size:12px;font-weight:700;
+    padding:8px 16px;border-radius:999px;letter-spacing:0.05em;text-transform:uppercase;
+  }
+  .card-body{padding:16px;display:flex;flex-direction:column;gap:10px;flex:1;}
+  .card-body .cat-tag{font-size:11px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--musgo);}
+  .card-body h3{font-size:15px;line-height:1.35;margin:0;font-weight:600;color:var(--cafe);min-height:40px;}
+  .card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;gap:8px;}
+  .price{font-family:'Fraunces',serif;font-size:19px;font-weight:600;color:var(--tierra-dark);}
+  .add-btn{
+    background:var(--cafe);color:var(--lino);border:none;padding:9px 16px;
+    border-radius:8px;font-size:13px;font-weight:600;transition:all .2s;white-space:nowrap;
+  }
+  .add-btn:hover{background:var(--tierra-dark);}
+  .add-btn:disabled{background:var(--linea);color:rgba(61,47,38,0.4);cursor:not-allowed;}
+
+  .empty-state{
+    text-align:center;padding:60px 20px;color:rgba(61,47,38,0.55);
+  }
+
+  .card-clickable{cursor:pointer;}
+
+  /* ===== PRODUCT DETAIL PAGE ===== */
+  .breadcrumb{font-size:13px;color:rgba(61,47,38,0.55);margin-bottom:22px;}
+  .breadcrumb a{color:var(--tierra-dark);font-weight:600;cursor:pointer;}
+  .back-link{
+    display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:600;
+    color:var(--cafe);margin-bottom:22px;cursor:pointer;opacity:0.75;
+  }
+  .back-link:hover{opacity:1;}
+  .detail-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start;
+  }
+  .detail-img{
+    aspect-ratio:1/0.9;border-radius:20px;position:relative;overflow:hidden;
+    background:linear-gradient(135deg, var(--arena), #d9c9a8);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .detail-img::before{
+    content:'';position:absolute;inset:0;
+    background:repeating-linear-gradient(100deg, rgba(61,47,38,0.05) 0 2px, transparent 2px 20px);
+  }
+  .detail-img .initials{
+    font-family:'Fraunces',serif;font-size:80px;font-weight:600;color:rgba(61,47,38,0.3);z-index:1;
+  }
+  .detail-info .cat-tag{font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--musgo);}
+  .detail-info h1{font-size:32px;margin:10px 0 16px;line-height:1.2;}
+  .detail-price{font-family:'Fraunces',serif;font-size:34px;font-weight:600;color:var(--tierra-dark);margin-bottom:6px;}
+  .detail-stock{font-size:14px;font-weight:600;margin-bottom:24px;}
+  .detail-stock.ok{color:var(--musgo);}
+  .detail-stock.low{color:var(--tierra);}
+  .detail-stock.out{color:#a8382a;}
+  .detail-desc{font-size:15px;line-height:1.7;color:rgba(61,47,38,0.8);margin-bottom:28px;}
+  .detail-features{list-style:none;padding:0;margin:0 0 30px;display:flex;flex-direction:column;gap:10px;}
+  .detail-features li{font-size:14px;display:flex;gap:10px;color:rgba(61,47,38,0.8);}
+  .detail-features li b{color:var(--cafe);min-width:130px;display:inline-block;}
+  .detail-qty{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
+  .detail-qty .qty-btn{width:34px;height:34px;font-size:16px;}
+  .detail-actions{display:flex;gap:12px;}
+  @media (max-width:760px){
+    .detail-grid{grid-template-columns:1fr;gap:30px;}
+    .detail-img .initials{font-size:60px;}
+  }
+
+  /* ===== CONTACTO ===== */
+  .contact-section{background:var(--arena);}
+  .contact-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:40px;
+  }
+  .contact-card{
+    background:var(--lino);border-radius:16px;padding:24px;border:1px solid var(--linea);
+  }
+  .contact-card h4{font-size:13px;text-transform:uppercase;letter-spacing:0.06em;color:var(--musgo);margin:0 0 10px;}
+  .contact-card p{font-size:15px;margin:0 0 6px;color:var(--cafe);}
+  .contact-card a{color:var(--tierra-dark);font-weight:600;}
+  @media (max-width:760px){.contact-grid{grid-template-columns:1fr;}}
+
+  /* ===== FOOTER ===== */
+  footer{
+    background:var(--cafe);color:var(--crudo);margin-top:60px;padding:50px 24px 30px;
+  }
+  .footer-inner{max-width:1180px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:30px;}
+  .footer-inner .logo{color:var(--crudo);}
+  .footer-cols{display:flex;gap:60px;flex-wrap:wrap;}
+  .footer-col h4{font-size:13px;text-transform:uppercase;letter-spacing:0.08em;margin:0 0 12px;color:var(--arena);}
+  .footer-col a,.footer-col p{display:block;font-size:14px;color:rgba(244,238,226,0.75);margin-bottom:8px;}
+  .footer-bottom{
+    max-width:1180px;margin:30px auto 0;padding-top:20px;border-top:1px solid rgba(244,238,226,0.15);
+    font-size:12px;color:rgba(244,238,226,0.5);
+  }
+
+  /* ===== MODAL / DRAWER SHARED ===== */
+  .overlay{
+    position:fixed;inset:0;background:rgba(61,47,38,0.45);z-index:100;
+    display:none;align-items:center;justify-content:center;
+    animation:fadeIn .2s ease;
+  }
+  .overlay.open{display:flex;}
+  @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+  .modal{
+    background:var(--lino);border-radius:18px;padding:32px;width:100%;max-width:420px;
+    max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(61,47,38,0.3);
+    position:relative;
+  }
+  .modal h2{margin:0 0 6px;font-size:24px;}
+  .modal .sub{font-size:14px;color:rgba(61,47,38,0.6);margin:0 0 24px;}
+  .close-x{
+    position:absolute;top:20px;right:20px;background:none;border:none;
+    font-size:20px;color:var(--cafe);opacity:0.5;width:30px;height:30px;
+  }
+  .close-x:hover{opacity:1;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--cafe);}
+  .field input, .field select{
+    width:100%;padding:11px 14px;border:1.5px solid var(--linea);border-radius:9px;
+    font-size:14px;font-family:inherit;background:white;outline:none;transition:border .2s;color:var(--cafe);
+  }
+  .field input:focus, .field select:focus{border-color:var(--tierra);}
+  .form-error{color:#a8382a;font-size:13px;margin:-8px 0 14px;}
+  .form-note{font-size:12px;color:rgba(61,47,38,0.5);margin-top:18px;text-align:center;}
+  .switch-link{color:var(--tierra-dark);font-weight:600;cursor:pointer;}
+
+  /* Cart drawer */
+  .drawer-overlay{
+    position:fixed;inset:0;background:rgba(61,47,38,0.4);z-index:100;
+    opacity:0;pointer-events:none;transition:opacity .25s;
+  }
+  .drawer-overlay.open{opacity:1;pointer-events:auto;}
+  .drawer{
+    position:fixed;top:0;right:0;height:100%;width:420px;max-width:92vw;
+    background:var(--lino);z-index:101;box-shadow:-10px 0 40px rgba(61,47,38,0.25);
+    transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);
+    display:flex;flex-direction:column;
+  }
+  .drawer.open{transform:translateX(0);}
+  .drawer-head{
+    padding:22px 24px;border-bottom:1px solid var(--linea);display:flex;justify-content:space-between;align-items:center;
+  }
+  .drawer-head h2{margin:0;font-size:22px;}
+  .drawer-items{flex:1;overflow-y:auto;padding:10px 24px;}
+  .cart-item{
+    display:flex;gap:12px;padding:16px 0;border-bottom:1px solid var(--linea);
+  }
+  .cart-item-img{
+    width:60px;height:60px;border-radius:10px;flex-shrink:0;
+    background:linear-gradient(135deg, var(--arena), #d9c9a8);
+    display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;
+    font-weight:600;color:rgba(61,47,38,0.4);font-size:16px;
+  }
+  .cart-item-info{flex:1;min-width:0;}
+  .cart-item-info h4{font-size:13.5px;margin:0 0 6px;font-weight:600;line-height:1.3;}
+  .qty-row{display:flex;align-items:center;gap:10px;}
+  .qty-btn{
+    width:24px;height:24px;border-radius:50%;border:1px solid var(--linea);background:white;
+    font-size:14px;display:flex;align-items:center;justify-content:center;color:var(--cafe);
+  }
+  .qty-row span{font-size:13px;font-weight:600;min-width:16px;text-align:center;}
+  .remove-link{font-size:12px;color:rgba(61,47,38,0.5);margin-left:auto;text-decoration:underline;cursor:pointer;}
+  .item-price{font-size:14px;font-weight:600;color:var(--tierra-dark);white-space:nowrap;}
+  .drawer-foot{padding:22px 24px;border-top:1px solid var(--linea);}
+  .subtotal-row{display:flex;justify-content:space-between;font-size:15px;margin-bottom:16px;font-weight:600;}
+  .subtotal-row .amt{font-family:'Fraunces',serif;font-size:20px;color:var(--tierra-dark);}
+
+  /* Checkout */
+  .pay-option{
+    display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--linea);
+    border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all .2s;
+  }
+  .pay-option:hover{border-color:var(--tierra);}
+  .pay-option.selected{border-color:var(--tierra);background:rgba(168,104,61,0.06);}
+  .pay-option input{margin:0;accent-color:var(--tierra);}
+  .pay-option .pay-icon{
+    width:36px;height:36px;border-radius:8px;background:var(--arena);display:flex;align-items:center;justify-content:center;
+    font-size:16px;flex-shrink:0;
+  }
+  .pay-option .pay-name{font-size:14px;font-weight:600;}
+  .pay-option .pay-desc{font-size:12px;color:rgba(61,47,38,0.55);}
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--cafe);color:var(--lino);padding:14px 24px;border-radius:12px;
+    font-size:14px;font-weight:600;z-index:200;opacity:0;transition:all .3s;box-shadow:var(--sombra);
+    display:flex;align-items:center;gap:10px;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+  .user-chip{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;}
+  .user-chip .avatar{
+    width:32px;height:32px;border-radius:50%;background:var(--musgo);color:white;
+    display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
+  }
+
+  @media (max-width:860px){
+    nav.cats{order:3;width:100%;justify-content:center;}
+    .header-inner{flex-wrap:wrap;}
+    .search-box{display:none;}
+    .hero{grid-template-columns:1fr;padding-top:40px;}
+    .hero h1{font-size:38px;}
+    .hero-visual{aspect-ratio:16/10;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo" id="logoHome" style="cursor:pointer;"><span class="logo-mark">A</span>Almendra Home</div>
+    <nav class="cats" id="mainNav">
+      <button id="navInicio">Inicio</button>
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="navProductosToggle">Productos <span class="arrow">▾</span></button>
+        <div class="dropdown-panel" id="navProductosPanel"></div>
+      </div>
+      <button id="navContacto">Contacto</button>
+    </nav>
+    <div class="header-actions">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Buscar productos...">
+      </div>
+      <div id="loginArea"></div>
+      <button class="icon-btn" id="cartBtn" aria-label="Carrito">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <span class="badge-count" id="cartCount" style="display:none;">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <div class="hero-eyebrow">Tejido a mano · Hecho para durar</div>
+    <h1>Calidez rústica para <em>cada rincón</em> de tu casa</h1>
+    <p>Textiles, blanquería y organización con materiales nobles y colores de tierra. Piezas pensadas para acompañar tu día a día, con envío a todo el país.</p>
+    <div class="hero-ctas">
+      <a href="#catalogo"><button class="btn-primary">Ver catálogo</button></a>
+      <a href="#Textil"><button class="btn-secondary">Textil</button></a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="weave-label">🌿 Colección de temporada</div>
+  </div>
+</section>
+
+<main id="catalogo"></main>
+
+<section class="section contact-section" id="contacto" style="max-width:none;">
+  <div class="section" style="padding-top:10px;">
+    <div class="section-head">
+      <h2>Contacto</h2>
+      <span class="count-tag">Estamos para ayudarte</span>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card">
+        <h4>Escribinos</h4>
+        <p>📧 <a href="mailto:hola@almendrahome.com.ar">hola@almendrahome.com.ar</a></p>
+        <p>📱 <a href="https://wa.me/5491100000000" target="_blank" rel="noopener">WhatsApp: +54 9 11 0000-0000</a></p>
+      </div>
+      <div class="contact-card">
+        <h4>Local y horarios</h4>
+        <p>📍 Av. Siempre Viva 1234, Buenos Aires, Argentina</p>
+        <p>🕒 Lunes a viernes de 9 a 18 hs · Sábados de 9 a 13 hs</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="logo">Almendra Home</div>
+      <p style="color:rgba(244,238,226,0.6);font-size:13px;max-width:260px;margin-top:14px;">Tienda de textiles y blanquería con espíritu rústico, para vestir tu hogar con materiales nobles.</p>
+    </div>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h4>Categorías</h4>
+        <a href="#Textil">Textil</a>
+        <a href="#Organización">Organización</a>
+        <a href="#Blanquería">Blanquería</a>
+      </div>
+      <div class="footer-col">
+        <h4>Ayuda</h4>
+        <p>Envíos a todo el país</p>
+        <p>Cambios dentro de 30 días</p>
+        <p>Pagos 100% seguros</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 Almendra Home. Todos los derechos reservados.</div>
+</footer>
+
+<!-- ===== LOGIN / REGISTER MODAL ===== -->
+<div class="overlay" id="authOverlay">
+  <div class="modal">
+    <button class="close-x" id="closeAuth">✕</button>
+    <div id="loginView">
+      <h2>Ingresá a tu cuenta</h2>
+      <p class="sub">Accedé para comprar y ver tus pedidos.</p>
+      <div id="loginError"></div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="vos@email.com">
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="loginPass" placeholder="••••••••">
+      </div>
+      <button class="btn-primary" style="width:100%;" id="loginSubmit">Ingresar</button>
+      <p class="form-note">¿No tenés cuenta? <span class="switch-link" id="goRegister">Creá una acá</span></p>
+    </div>
+    <div id="registerView" style="display:none;">
+      <h2>Creá tu cuenta</h2>
+      <p class="sub">Sumate a Almendra Home.</p>
+      <div id="registerError"></div>
+      <div class="field">
+        <label>Nombre</label>
+        <input type="text" id="regName" placeholder="Tu nombre">
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="vos@email.com">
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="regPass" placeholder="Mínimo 6 caracteres">
+      </div>
+      <button class="btn-primary" style="width:100%;" id="registerSubmit">Crear cuenta</button>
+      <p class="form-note">¿Ya tenés cuenta? <span class="switch-link" id="goLogin">Ingresá</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CART DRAWER ===== -->
+<div class="drawer-overlay" id="cartOverlay"></div>
+<div class="drawer" id="cartDrawer">
+  <div class="drawer-head">
+    <h2>Tu carrito</h2>
+    <button class="close-x" style="position:static;" id="closeCart">✕</button>
+  </div>
+  <div class="drawer-items" id="cartItems"></div>
+  <div class="drawer-foot">
+    <div class="subtotal-row"><span>Subtotal</span><span class="amt" id="cartSubtotal">$0</span></div>
+    <button class="btn-primary" style="width:100%;" id="goCheckout">Finalizar compra</button>
+  </div>
+</div>
+
+<!-- ===== CHECKOUT MODAL ===== -->
+<div class="overlay" id="checkoutOverlay">
+  <div class="modal" style="max-width:460px;">
+    <button class="close-x" id="closeCheckout">✕</button>
+    <h2>Método de pago</h2>
+    <p class="sub">Elegí cómo querés pagar tu pedido.</p>
+    <div id="payOptions"></div>
+    <div class="subtotal-row" style="margin-top:18px;"><span>Total a pagar</span><span class="amt" id="checkoutTotal">$0</span></div>
+    <button class="btn-primary" style="width:100%;" id="confirmPay">Confirmar pedido</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PRODUCTS_FALLBACK = [{"id": 1, "name": "Paño de cocina Home Sweet Home", "category": "Textil", "stock": 1, "price": 8438}, {"id": 2, "name": "Yerbera y Azucarera Rayas Arena", "category": "Textil", "stock": 1, "price": 11812}, {"id": 3, "name": "Manta Pampa Petip (70x150) Gris", "category": "Textil", "stock": 1, "price": 18248}, {"id": 4, "name": "Contenedor Arboles Grises", "category": "Textil", "stock": 0, "price": 10766}, {"id": 5, "name": "Alfombra Baño pelo corto Gris", "category": "Textil", "stock": 1, "price": 12364}, {"id": 6, "name": "Alfombra Baño pelo corto Chocolate", "category": "Textil", "stock": 1, "price": 12364}, {"id": 7, "name": "Borlas surtidas", "category": "Textil", "stock": 2, "price": 6581}, {"id": 8, "name": "Yerbera y Azucarera Arg raya gruesa", "category": "Textil", "stock": 2, "price": 13162}, {"id": 9, "name": "Camino chenille flecos raya vision y gris", "category": "Textil", "stock": 0, "price": 18562}, {"id": 10, "name": "Contenedor Liso Gris oscuro", "category": "Textil", "stock": 1, "price": 9956}, {"id": 11, "name": "Alfombra baño Canelon Gris", "category": "Textil", "stock": 1, "price": 15750}, {"id": 12, "name": "Alfombra baño Canelon Beige", "category": "Textil", "stock": 0, "price": 15750}, {"id": 13, "name": "Alfomba chica (100x150) tres rayas finas negras", "category": "Textil", "stock": 1, "price": 23422}, {"id": 14, "name": "Alfombra Chica (100x150) Multirayas negras", "category": "Textil", "stock": 0, "price": 23422}, {"id": 15, "name": "Pack x 5 trapito de piso rustico", "category": "Textil", "stock": 5, "price": 900}, {"id": 16, "name": "Manta Argentina 2da", "category": "Textil", "stock": 0, "price": 52942}, {"id": 17, "name": "Alfombra Chica (100x150) Gris tres rayas finas negras", "category": "Textil", "stock": 1, "price": 23422}, {"id": 18, "name": "Almahodon matero rectangular chico con manija gris rayas", "category": "Textil", "stock": 1, "price": 33638}, {"id": 19, "name": "Almahodon matero rectangular grande con manija Mil rayas Grafito", "category": "Textil", "stock": 1, "price": 37125}, {"id": 20, "name": "Manta chica (100x150) Cuadros frizados Negro 2da", "category": "Textil", "stock": 1, "price": 23422}, {"id": 21, "name": "Individual Argentina Sol", "category": "Textil", "stock": 2, "price": 11812}, {"id": 22, "name": "Agardora Rayas Gris", "category": "Textil", "stock": 0, "price": 6581}, {"id": 23, "name": "Agarradora Tres Rayas tostadas", "category": "Textil", "stock": 1, "price": 6581}, {"id": 24, "name": "Paño cocina Mil rayas tostado", "category": "Textil", "stock": 1, "price": 7729}, {"id": 25, "name": "Paño cocina Rayas grises", "category": "Textil", "stock": 0, "price": 7729}, {"id": 26, "name": "Manta Cotton Petit (70x150) Arena 2da", "category": "Textil", "stock": 1, "price": 15142}, {"id": 27, "name": "Jabonera de pared con tapa", "category": "Organización", "stock": 1, "price": 5884}, {"id": 28, "name": "Caja organizador Grande", "category": "Organización", "stock": 0, "price": 11340}, {"id": 29, "name": "Caja Organizadora plegable", "category": "Organización", "stock": 2, "price": 9225}, {"id": 30, "name": "Caja Organizadora plegable", "category": "Organización", "stock": 2, "price": 7425}, {"id": 31, "name": "Caja Organizadora con Visor", "category": "Organización", "stock": 1, "price": 9900}, {"id": 32, "name": "Caja organizadora Con Visor", "category": "Organización", "stock": 1, "price": 11138}, {"id": 33, "name": "Canasto Organizador", "category": "Organización", "stock": 0, "price": 11617}, {"id": 34, "name": "Canasto Organizador Mediano", "category": "Organización", "stock": 1, "price": 14008}, {"id": 35, "name": "Canasto de Limpieza", "category": "Organización", "stock": 1, "price": 5668}, {"id": 36, "name": "Estante Organizador de Pared", "category": "Organización", "stock": 1, "price": 10930}, {"id": 37, "name": "Organizador Rectangular Chico", "category": "Organización", "stock": 2, "price": 5116}, {"id": 38, "name": "Organizador con Visor", "category": "Organización", "stock": 0, "price": 28350}, {"id": 39, "name": "Set x 6U. Neceser de Viaje", "category": "Organización", "stock": 3, "price": 2888}, {"id": 40, "name": "Set x 8 Pcs. Neceser de Viaje", "category": "Organización", "stock": 2, "price": 1229}, {"id": 41, "name": "Manta plush berlin doble jackard(Azul marino, 2 plazas y 1/2)", "category": "Blanquería", "stock": 1, "price": 23175}, {"id": 42, "name": "Juego de sabanas infantil estampada + Lunchera termica escolar campomayo surtido", "category": "Blanquería", "stock": 2, "price": 36000}, {"id": 43, "name": "Juego de sábanas estampada 600H + cartera campomayo (2 plazas y 1/2, Surtido).", "category": "Blanquería", "stock": 1, "price": 36225}, {"id": 44, "name": "Juego de sabanas Campomayo broderie 1000 hilos (Queen, Azul)", "category": "Blanquería", "stock": 1, "price": 55350}, {"id": 45, "name": "Juego de sabanas lisa 300 hilos teka (2 plazas y 1/2, Rosa)", "category": "Blanquería", "stock": 1, "price": 36855}, {"id": 46, "name": "Repasador corazones por 12", "category": "Blanquería", "stock": 2, "price": 2008}, {"id": 47, "name": "Protector cortina de baño paris(50 MM)", "category": "Blanquería", "stock": 2, "price": 5670}, {"id": 48, "name": "Delantal simil cuero Paris", "category": "Blanquería", "stock": 2, "price": 14850}, {"id": 49, "name": "Delantal rayado Paris", "category": "Blanquería", "stock": 2, "price": 8910}, {"id": 50, "name": "Delantal simil lino Paris", "category": "Blanquería", "stock": 2, "price": 9900}, {"id": 51, "name": "Sabana ajustable en rollito sueño blanco (Queen)", "category": "Blanquería", "stock": 1, "price": 16875}, {"id": 52, "name": "Sabana ajustable en rollito sueño blanco(Full)", "category": "Blanquería", "stock": 1, "price": 15525}, {"id": 53, "name": "Sabana ajustable en rollito sueño blanco(Single)", "category": "Blanquería", "stock": 1, "price": 11700}, {"id": 54, "name": "Sabana ajustable en rollito sueño blanco (Single XI)", "category": "Blanquería", "stock": 1, "price": 13500}, {"id": 55, "name": "Cortina de baño peva estampada con ganchos CAMPOMAYO (Surtido)", "category": "Blanquería", "stock": 2, "price": 11925}, {"id": 56, "name": "Bata de baño infantil animales con capucha PARIS(4, VERDE CLARO)", "category": "Blanquería", "stock": 1, "price": 35888}, {"id": 57, "name": "Bata de baño infantil animales con capucha PARIS(10, ROSA)", "category": "Blanquería", "stock": 1, "price": 35888}, {"id": 58, "name": "Bata de baño infantil animales con capucha PARIS(8, MARRON)", "category": "Blanquería", "stock": 1, "price": 35888}, {"id": 59, "name": "Bata de baño infantil animales con capucha PARIS(6, GRIS)", "category": "Blanquería", "stock": 1, "price": 35888}, {"id": 60, "name": "Manta luminosa fluorecente en la oscuridad (1 plaza y 1/2, Surtido)", "category": "Blanquería", "stock": 2, "price": 19462}, {"id": 61, "name": "Repasador ondas vibrantes por 12(Surtido)", "category": "Blanquería", "stock": 24, "price": 188}, {"id": 62, "name": "Acolchado Buenos Aires con corderito a tono ROYAL(Queen, Natural)", "category": "Blanquería", "stock": 0, "price": 55125}, {"id": 63, "name": "Frazada panal de abeja royale flannel CAMPOMAYO (1 plaza y 1/2, Rosa)", "category": "Blanquería", "stock": 1, "price": 30150}, {"id": 64, "name": "Frazada Cuadros flannel Shangai CHILL&HOME(Queen, Camel)", "category": "Blanquería", "stock": 1, "price": 52650}, {"id": 65, "name": "Frazada Acanalada flannel Taiwan CHILL&HOME(Queen, Natural)", "category": "Blanquería", "stock": 1, "price": 52650}, {"id": 66, "name": "Frazada Burbuja flannel Sidney CHILL&HOME(Queen, Chocolate", "category": "Blanquería", "stock": 1, "price": 52650}, {"id": 67, "name": "Set de baño 16 piezas completo diseño minimalista CAMPOMAYO (BLANCO )", "category": "Blanquería", "stock": 1, "price": 25875}, {"id": 68, "name": "Set de baño 16 piezas completo diseño minimalista CAMPOMAYO (BLANCO)", "category": "Blanquería", "stock": 1, "price": 25875}, {"id": 69, "name": "Juego de sabanas en caja organica 2000 hilos CAMPOMAYO (Queen", "category": "Blanquería", "stock": 2, "price": 49950}, {"id": 70, "name": "Frazada flannel burbuja suave CAMPOMAYO (2 plazas y 1/2, Tostado)", "category": "Blanquería", "stock": 1, "price": 55575}, {"id": 71, "name": "Frazada flannel burbuja suave CAMPOMAYO (2 plazas y 1/2, Gris topo)", "category": "Blanquería", "stock": 1, "price": 55575}, {"id": 72, "name": "Frazada flannel burbuja suave CAMPOMAYO (1 plazas y 1/2, Azul)", "category": "Blanquería", "stock": 1, "price": 36450}, {"id": 73, "name": "Manta plush berlin doble jackard (Gris oscuro, 2 plazas y 1/2)", "category": "Blanquería", "stock": 1, "price": 23175}, {"id": 74, "name": "Toalla de mano burbujas 100% Algodon TEKA(AZUL", "category": "Blanquería", "stock": 1, "price": 6300}, {"id": 75, "name": "Toalla de mano burbujas 100% Algodon TEKA(TURQUESA)", "category": "Blanquería", "stock": 1, "price": 6300}, {"id": 76, "name": "Toallon burbujas 100% Algodon TEKA (TURQUESA)", "category": "Blanquería", "stock": 1, "price": 11475}, {"id": 77, "name": "Toallon burbujas 100% Algodon TEKA(AZUL)", "category": "Blanquería", "stock": 1, "price": 11475}, {"id": 78, "name": "Juego de toalla y toallon algodon SANTEL", "category": "Blanquería", "stock": 2, "price": 17438}];
+
+let PRODUCTS = PRODUCTS_FALLBACK;
+
+// ===== SINCRONIZACIÓN AUTOMÁTICA CON GOOGLE SHEETS =====
+// 1) Migrá tu Excel a un Google Sheet con columnas: Producto | Categoria | Stock | Precio
+// 2) Archivo > Compartir > Publicar en la Web > elegí la hoja > formato CSV > Publicar
+// 3) Pegá abajo el link que te da Google (termina en "output=csv")
+// Mientras no completes esta URL, la tienda usa el catálogo guardado el 06/07/2026 (PRODUCTS_FALLBACK).
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTPPg9EheapVeKBfdX4AjYJ9--ttq4AYXJHUOZCFZPmn_IdSE5JTUZ9D4_ILE1gaIH_qq5-90FsKxtM/pub?output=csv";
+
+async function loadProductsFromSheet(){
+  if(!SHEET_CSV_URL){
+    console.info('Almendra Home: SHEET_CSV_URL no configurada, usando catálogo local.');
+    return;
+  }
+  try{
+    const res = await fetch(SHEET_CSV_URL, {cache:'no-store'});
+    if(!res.ok) throw new Error('No se pudo leer la hoja de Google Sheets');
+    const csvText = await res.text();
+    const parsed = Papa.parse(csvText, {header:true, skipEmptyLines:true});
+    const rows = parsed.data;
+    const getField = (r, keys) => {
+      for(const k of keys){ if(r[k] !== undefined) return r[k]; }
+      return '';
+    };
+    const newProducts = rows.map((r,i)=>{
+      const name = String(getField(r, ['Producto','producto','PRODUCTO'])||'').trim();
+      const category = String(getField(r, ['Categoria','Categoría','categoria','categoría'])||'').trim();
+      const stockRaw = getField(r, ['Stock','stock','STOCK']);
+      const priceRaw = getField(r, ['Precio','precio','PRECIO']);
+      const stock = parseInt(String(stockRaw).replace(/[^\d-]/g,'')) || 0;
+      const price = Math.round(parseFloat(String(priceRaw).replace(/[^\d.,-]/g,'').replace(',','.'))) || 0;
+      return {id: i+1, name, category, stock, price};
+    }).filter(p => p.name && p.price > 0);
+
+    if(newProducts.length > 0){
+      PRODUCTS = newProducts;
+      console.info(`Almendra Home: ${newProducts.length} productos sincronizados desde Google Sheets.`);
+    }
+  }catch(err){
+    console.warn('Almendra Home: no se pudo sincronizar con Google Sheets, se usa el catálogo local.', err);
+  }
+}
+
+const PAYMENT_METHODS = [
+  {id:'mp', name:'Mercado Pago', desc:'Dinero en cuenta o QR', icon:'💳'},
+  {id:'credito', name:'Tarjeta de crédito', desc:'Visa, Mastercard, Amex', icon:'💳'},
+  {id:'debito', name:'Tarjeta de débito', desc:'Débito de tu banco', icon:'🏦'},
+  {id:'transferencia', name:'Transferencia bancaria', desc:'CBU / Alias', icon:'🏧'},
+  {id:'efectivo', name:'Efectivo (Rapipago / Pago Fácil)', desc:'Pagás en el local más cercano', icon:'💵'},
+];
+
+let state = {
+  user: null,
+  cart: {}, // id -> qty
+  category: 'Todos',
+  search: '',
+  authMode: 'login',
+  selectedPayment: null,
+};
+
+const money = n => '$' + Math.round(n).toLocaleString('es-AR');
+
+function initials(name){
+  return name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+
+// ---------- MAIN NAV: Inicio / Productos (dropdown) / Contacto ----------
+function renderProductosPanel(){
+  const cats = [...new Set(PRODUCTS.map(p=>p.category))];
+  const panel = document.getElementById('navProductosPanel');
+  panel.innerHTML = ['Todos', ...cats].map(c =>
+    `<button data-cat="${c}" class="${state.category===c?'active':''}">${c==='Todos' ? 'Ver todos' : c}</button>`
+  ).join('');
+  panel.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state.category = btn.dataset.cat;
+      goToCatalog();
+      closeProductosDropdown();
+      renderProductosPanel();
+      renderCatalog();
+      document.getElementById('catalogo').scrollIntoView({behavior:'smooth'});
+    });
+  });
+}
+
+function toggleProductosDropdown(){
+  document.getElementById('navProductosToggle').classList.toggle('open');
+  document.getElementById('navProductosPanel').classList.toggle('open');
+}
+function closeProductosDropdown(){
+  document.getElementById('navProductosToggle').classList.remove('open');
+  document.getElementById('navProductosPanel').classList.remove('open');
+}
+
+document.getElementById('navProductosToggle').addEventListener('click', (e)=>{
+  e.stopPropagation();
+  toggleProductosDropdown();
+});
+document.addEventListener('click', (e)=>{
+  const dropdown = document.querySelector('.dropdown');
+  if(dropdown && !dropdown.contains(e.target)) closeProductosDropdown();
+});
+
+document.getElementById('navInicio').addEventListener('click', ()=>{
+  window.location.hash = '';
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+document.getElementById('logoHome').addEventListener('click', ()=>{
+  window.location.hash = '';
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+document.getElementById('navContacto').addEventListener('click', ()=>{
+  goToCatalog();
+  document.getElementById('contacto').scrollIntoView({behavior:'smooth'});
+});
+
+// ---------- CATALOG ----------
+function renderCatalog(){
+  const main = document.getElementById('catalogo');
+  const term = state.search.trim().toLowerCase();
+  let list = PRODUCTS.filter(p=>{
+    const matchCat = state.category==='Todos' || p.category===state.category;
+    const matchTerm = !term || p.name.toLowerCase().includes(term);
+    return matchCat && matchTerm;
+  });
+
+  if(list.length===0){
+    main.innerHTML = `<div class="section"><div class="empty-state">
+      <h3>No encontramos productos</h3>
+      <p>Probá con otra búsqueda o elegí otra categoría.</p>
+    </div></div>`;
+    return;
+  }
+
+  const cats = state.category==='Todos' ? [...new Set(list.map(p=>p.category))] : [state.category];
+
+  main.innerHTML = cats.map(cat=>{
+    const items = list.filter(p=>p.category===cat);
+    if(items.length===0) return '';
+    return `
+      <section class="section" id="${cat}">
+        <div class="section-head">
+          <h2>${cat}</h2>
+          <span class="count-tag">${items.length} producto${items.length!==1?'s':''}</span>
+        </div>
+        <div class="grid">
+          ${items.map(cardHTML).join('')}
+        </div>
+      </section>
+    `;
+  }).join('');
+
+  main.querySelectorAll('[data-add]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      addToCart(parseInt(btn.dataset.add));
+    });
+  });
+
+  main.querySelectorAll('[data-view]').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      window.location.hash = '#producto/' + card.dataset.view;
+    });
+  });
+}
+
+// ---------- PRODUCT DETAIL PAGE (ruteo por hash, estilo "página propia") ----------
+function goToCatalog(){
+  if(window.location.hash.startsWith('#producto')) window.location.hash = '';
+}
+
+function renderProductDetail(id){
+  const p = PRODUCTS.find(x=>x.id===id);
+  const main = document.getElementById('catalogo');
+  if(!p){
+    main.innerHTML = `<div class="section"><div class="empty-state"><h3>Producto no encontrado</h3></div></div>`;
+    return;
+  }
+  const noStock = p.stock<=0;
+  const low = p.stock>0 && p.stock<=2;
+  const stockClass = noStock ? 'out' : (low ? 'low' : 'ok');
+  const stockText = noStock ? 'Sin stock' : (low ? `Últimas unidades (${p.stock} disponibles)` : `En stock (${p.stock} disponibles)`);
+
+  main.innerHTML = `
+    <div class="section">
+      <div class="breadcrumb">
+        <a data-crumb="home">Inicio</a> / <a data-crumb="cat" data-cat="${p.category}">${p.category}</a> / ${p.name}
+      </div>
+      <div class="detail-grid">
+        <div class="detail-img">
+          ${noStock ? `<div class="no-stock-overlay"><span>Sin stock</span></div>` : ''}
+          <span class="initials">${initials(p.name)}</span>
+        </div>
+        <div class="detail-info">
+          <span class="cat-tag">${p.category}</span>
+          <h1>${p.name}</h1>
+          <div class="detail-price">${money(p.price)}</div>
+          <div class="detail-stock ${stockClass}">${stockText}</div>
+          <p class="detail-desc">Pieza de la colección Almendra Home, pensada para sumar calidez rústica a tu día a día. Confeccionada con materiales nobles y un diseño atemporal que combina con distintos ambientes del hogar.</p>
+          <ul class="detail-features">
+            <li><b>Categoría</b> ${p.category}</li>
+            <li><b>Código</b> AH-${String(p.id).padStart(4,'0')}</li>
+            <li><b>Disponibilidad</b> ${noStock ? 'Sin stock' : p.stock + ' unidades'}</li>
+            <li><b>Envío</b> A todo el país</li>
+            <li><b>Cambios</b> Dentro de los 30 días de la compra</li>
+          </ul>
+          <button class="add-btn" style="padding:14px 28px;font-size:15px;" data-add="${p.id}" ${noStock?'disabled':''}>${noStock?'Sin stock':'Agregar al carrito'}</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  main.querySelector('[data-crumb="home"]').addEventListener('click', ()=>{ window.location.hash=''; });
+  main.querySelector('[data-crumb="cat"]').addEventListener('click', (e)=>{
+    state.category = e.target.dataset.cat;
+    window.location.hash = '';
+  });
+  const addBtn = main.querySelector('[data-add]');
+  if(addBtn){
+    addBtn.addEventListener('click', ()=>addToCart(p.id));
+  }
+}
+
+function router(){
+  const hash = window.location.hash;
+  if(hash.startsWith('#producto/')){
+    const id = parseInt(hash.split('/')[1]);
+    renderProductDetail(id);
+    window.scrollTo({top:0});
+  } else {
+    renderCatalog();
+  }
+}
+window.addEventListener('hashchange', router);
+
+function cardHTML(p){
+  const noStock = p.stock<=0;
+  const low = p.stock>0 && p.stock<=2;
+  return `
+    <div class="card card-clickable" data-view="${p.id}">
+      <div class="card-img">
+        ${noStock ? `<div class="no-stock-overlay"><span>Sin stock</span></div>` : ''}
+        ${!noStock ? `<span class="stock-flag ${low?'low':''}">${low?'Últimas unidades':'En stock'}</span>` : ''}
+        <span class="initials">${initials(p.name)}</span>
+      </div>
+      <div class="card-body">
+        <span class="cat-tag">${p.category}</span>
+        <h3>${p.name}</h3>
+        <div class="card-footer">
+          <span class="price">${money(p.price)}</span>
+          <button class="add-btn" data-add="${p.id}" ${noStock?'disabled':''}>${noStock?'Sin stock':'Agregar'}</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ---------- SEARCH ----------
+document.getElementById('searchInput').addEventListener('input', e=>{
+  state.search = e.target.value;
+  renderCatalog();
+});
+
+// ---------- CART ----------
+function addToCart(id){
+  const p = PRODUCTS.find(x=>x.id===id);
+  if(!p || p.stock<=0) return;
+  const currentQty = state.cart[id] || 0;
+  if(currentQty >= p.stock){
+    showToast(`No hay más stock disponible de "${p.name}"`);
+    return;
+  }
+  state.cart[id] = currentQty + 1;
+  renderCartCount();
+  renderCartDrawer();
+  showToast(`"${p.name}" agregado al carrito`);
+}
+
+function changeQty(id, delta){
+  const p = PRODUCTS.find(x=>x.id===id);
+  let qty = (state.cart[id]||0) + delta;
+  if(qty > p.stock) qty = p.stock;
+  if(qty <= 0){ delete state.cart[id]; }
+  else { state.cart[id] = qty; }
+  renderCartCount();
+  renderCartDrawer();
+}
+
+function removeFromCart(id){
+  delete state.cart[id];
+  renderCartCount();
+  renderCartDrawer();
+}
+
+function cartTotal(){
+  return Object.entries(state.cart).reduce((sum,[id,qty])=>{
+    const p = PRODUCTS.find(x=>x.id===parseInt(id));
+    return sum + (p ? p.price*qty : 0);
+  }, 0);
+}
+
+function renderCartCount(){
+  const totalQty = Object.values(state.cart).reduce((a,b)=>a+b,0);
+  const badge = document.getElementById('cartCount');
+  if(totalQty>0){
+    badge.style.display='flex';
+    badge.textContent = totalQty;
+  } else {
+    badge.style.display='none';
+  }
+}
+
+function renderCartDrawer(){
+  const container = document.getElementById('cartItems');
+  const entries = Object.entries(state.cart);
+  if(entries.length===0){
+    container.innerHTML = `<div class="empty-state"><p>Tu carrito está vacío.</p></div>`;
+  } else {
+    container.innerHTML = entries.map(([id,qty])=>{
+      const p = PRODUCTS.find(x=>x.id===parseInt(id));
+      return `
+        <div class="cart-item">
+          <div class="cart-item-img">${initials(p.name)}</div>
+          <div class="cart-item-info">
+            <h4>${p.name}</h4>
+            <div class="qty-row">
+              <button class="qty-btn" data-dec="${p.id}">−</button>
+              <span>${qty}</span>
+              <button class="qty-btn" data-inc="${p.id}">+</button>
+              <span class="remove-link" data-remove="${p.id}">Quitar</span>
+            </div>
+          </div>
+          <div class="item-price">${money(p.price*qty)}</div>
+        </div>
+      `;
+    }).join('');
+
+    container.querySelectorAll('[data-inc]').forEach(b=>b.addEventListener('click',()=>changeQty(parseInt(b.dataset.inc),1)));
+    container.querySelectorAll('[data-dec]').forEach(b=>b.addEventListener('click',()=>changeQty(parseInt(b.dataset.dec),-1)));
+    container.querySelectorAll('[data-remove]').forEach(b=>b.addEventListener('click',()=>removeFromCart(parseInt(b.dataset.remove))));
+  }
+  document.getElementById('cartSubtotal').textContent = money(cartTotal());
+}
+
+document.getElementById('cartBtn').addEventListener('click', ()=>openCart());
+document.getElementById('closeCart').addEventListener('click', closeCart);
+document.getElementById('cartOverlay').addEventListener('click', closeCart);
+
+function openCart(){
+  renderCartDrawer();
+  document.getElementById('cartDrawer').classList.add('open');
+  document.getElementById('cartOverlay').classList.add('open');
+}
+function closeCart(){
+  document.getElementById('cartDrawer').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('open');
+}
+
+// ---------- AUTH ----------
+function renderLoginArea(){
+  const area = document.getElementById('loginArea');
+  if(state.user){
+    area.innerHTML = `<div class="user-chip"><div class="avatar">${initials(state.user.name)}</div>${state.user.name.split(' ')[0]}</div>`;
+    area.style.cursor='pointer';
+    area.onclick = ()=>{
+      if(confirm('¿Cerrar sesión?')){
+        state.user = null;
+        renderLoginArea();
+        showToast('Sesión cerrada');
+      }
+    };
+  } else {
+    area.innerHTML = `<button class="btn-secondary" style="padding:9px 18px;font-size:13px;">Ingresar</button>`;
+    area.onclick = openAuth;
+  }
+}
+
+function openAuth(){
+  document.getElementById('authOverlay').classList.add('open');
+}
+function closeAuth(){
+  document.getElementById('authOverlay').classList.remove('open');
+  document.getElementById('loginError').innerHTML='';
+  document.getElementById('registerError').innerHTML='';
+}
+document.getElementById('closeAuth').addEventListener('click', closeAuth);
+document.getElementById('authOverlay').addEventListener('click', e=>{
+  if(e.target.id==='authOverlay') closeAuth();
+});
+
+document.getElementById('goRegister').addEventListener('click', ()=>{
+  document.getElementById('loginView').style.display='none';
+  document.getElementById('registerView').style.display='block';
+});
+document.getElementById('goLogin').addEventListener('click', ()=>{
+  document.getElementById('registerView').style.display='none';
+  document.getElementById('loginView').style.display='block';
+});
+
+document.getElementById('loginSubmit').addEventListener('click', ()=>{
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const err = document.getElementById('loginError');
+  if(!email || !pass){
+    err.innerHTML = `<p class="form-error">Completá email y contraseña.</p>`;
+    return;
+  }
+  // Demo: acepta cualquier combinación válida (sin backend real conectado)
+  state.user = {name: email.split('@')[0], email};
+  err.innerHTML='';
+  renderLoginArea();
+  closeAuth();
+  showToast(`¡Bienvenido/a, ${state.user.name}!`);
+});
+
+document.getElementById('registerSubmit').addEventListener('click', ()=>{
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const pass = document.getElementById('regPass').value;
+  const err = document.getElementById('registerError');
+  if(!name || !email || pass.length<6){
+    err.innerHTML = `<p class="form-error">Completá todos los campos (contraseña mínimo 6 caracteres).</p>`;
+    return;
+  }
+  state.user = {name, email};
+  err.innerHTML='';
+  renderLoginArea();
+  closeAuth();
+  showToast(`Cuenta creada. ¡Bienvenido/a, ${name}!`);
+});
+
+// ---------- CHECKOUT ----------
+document.getElementById('goCheckout').addEventListener('click', ()=>{
+  if(Object.keys(state.cart).length===0){
+    showToast('Tu carrito está vacío');
+    return;
+  }
+  if(!state.user){
+    closeCart();
+    openAuth();
+    showToast('Ingresá a tu cuenta para continuar');
+    return;
+  }
+  closeCart();
+  openCheckout();
+});
+
+function renderPayOptions(){
+  const container = document.getElementById('payOptions');
+  container.innerHTML = PAYMENT_METHODS.map(pm=>`
+    <label class="pay-option ${state.selectedPayment===pm.id?'selected':''}" data-pay="${pm.id}">
+      <input type="radio" name="pay" value="${pm.id}" ${state.selectedPayment===pm.id?'checked':''}>
+      <div class="pay-icon">${pm.icon}</div>
+      <div>
+        <div class="pay-name">${pm.name}</div>
+        <div class="pay-desc">${pm.desc}</div>
+      </div>
+    </label>
+  `).join('');
+  container.querySelectorAll('.pay-option').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      state.selectedPayment = el.dataset.pay;
+      renderPayOptions();
+    });
+  });
+}
+
+function openCheckout(){
+  renderPayOptions();
+  document.getElementById('checkoutTotal').textContent = money(cartTotal());
+  document.getElementById('checkoutOverlay').classList.add('open');
+}
+function closeCheckout(){
+  document.getElementById('checkoutOverlay').classList.remove('open');
+}
+document.getElementById('closeCheckout').addEventListener('click', closeCheckout);
+document.getElementById('checkoutOverlay').addEventListener('click', e=>{
+  if(e.target.id==='checkoutOverlay') closeCheckout();
+});
+
+document.getElementById('confirmPay').addEventListener('click', ()=>{
+  if(!state.selectedPayment){
+    showToast('Elegí un método de pago');
+    return;
+  }
+  const pm = PAYMENT_METHODS.find(p=>p.id===state.selectedPayment);
+  // Descuenta stock localmente (simulación de compra)
+  Object.entries(state.cart).forEach(([id,qty])=>{
+    const p = PRODUCTS.find(x=>x.id===parseInt(id));
+    if(p) p.stock = Math.max(0, p.stock - qty);
+  });
+  state.cart = {};
+  state.selectedPayment = null;
+  closeCheckout();
+  renderCartCount();
+  router();
+  showToast(`¡Pedido confirmado! Pagás con ${pm.name} 🎉`);
+});
+
+// ---------- TOAST ----------
+let toastTimer;
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>toast.classList.remove('show'), 2600);
+}
+
+// ---------- INIT ----------
+(async function init(){
+  await loadProductsFromSheet();
+  renderProductosPanel();
+  router();
+  renderLoginArea();
+  renderCartCount();
+})();
+</script>
+</body>
+</html>
