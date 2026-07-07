@@ -581,19 +581,31 @@ async function loadProductsFromSheet(){
   try{
     const res = await fetch(SHEET_CSV_URL, {cache:'no-store'});
     if(!res.ok) throw new Error('HTTP ' + res.status + ' al leer la hoja');
-    const csvText = await res.text();
-    const parsed = Papa.parse(csvText, {header:true, skipEmptyLines:true});
+    let csvText = await res.text();
+    csvText = csvText.replace(/^\uFEFF/, ''); // quitar BOM si existe
+
+    const normalize = (s) => String(s||'')
+      .replace(/^\uFEFF/, '')
+      .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // quitar acentos
+      .trim().toLowerCase();
+
+    const parsed = Papa.parse(csvText, {
+      header:true,
+      skipEmptyLines:true,
+      transformHeader: h => normalize(h)
+    });
     const rows = parsed.data;
-    const getField = (r, keys) => {
-      for(const k of keys){ if(r[k] !== undefined) return r[k]; }
+
+    const getField = (r, normalizedKeys) => {
+      for(const k of normalizedKeys){ if(r[k] !== undefined && r[k] !== '') return r[k]; }
       return '';
     };
     const newProducts = rows.map((r,i)=>{
-      const name = String(getField(r, ['Producto','producto','PRODUCTO'])||'').trim();
-      const category = String(getField(r, ['Categoria','Categoría','categoria','categoría'])||'').trim();
-      const stockRaw = getField(r, ['Stock','stock','STOCK']);
-      const priceRaw = getField(r, ['Precio','precio','PRECIO']);
-      const image = String(getField(r, ['Imagen','imagen','IMAGEN','Foto','foto'])||'').trim();
+      const name = String(getField(r, ['producto'])||'').trim();
+      const category = String(getField(r, ['categoria'])||'').trim();
+      const stockRaw = getField(r, ['stock']);
+      const priceRaw = getField(r, ['precio']);
+      const image = String(getField(r, ['imagen','foto'])||'').trim();
       const stock = parseInt(String(stockRaw).replace(/[^\d-]/g,'')) || 0;
       const price = Math.round(parseFloat(String(priceRaw).replace(/[^\d.,-]/g,'').replace(',','.'))) || 0;
       return {id: i+1, name, category, stock, price, image};
@@ -604,7 +616,8 @@ async function loadProductsFromSheet(){
       console.info(`Almendra Home: ${newProducts.length} productos sincronizados desde Google Sheets.`);
       window.__syncStatus = {ok:true, count:newProducts.length};
     } else {
-      window.__syncStatus = {ok:false, error:'La hoja respondió pero no tiene filas válidas (revisá encabezados y precios).'};
+      const headerSample = parsed.meta && parsed.meta.fields ? parsed.meta.fields.join(' | ') : 'sin datos';
+      window.__syncStatus = {ok:false, error:'0 filas válidas. Encabezados detectados: ' + headerSample};
     }
   }catch(err){
     console.warn('Almendra Home: no se pudo sincronizar con Google Sheets, se usa el catálogo local.', err);
