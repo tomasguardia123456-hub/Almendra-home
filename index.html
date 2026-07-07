@@ -580,7 +580,7 @@ async function loadProductsFromSheet(){
   }
   try{
     const res = await fetch(SHEET_CSV_URL, {cache:'no-store'});
-    if(!res.ok) throw new Error('No se pudo leer la hoja de Google Sheets');
+    if(!res.ok) throw new Error('HTTP ' + res.status + ' al leer la hoja');
     const csvText = await res.text();
     const parsed = Papa.parse(csvText, {header:true, skipEmptyLines:true});
     const rows = parsed.data;
@@ -602,10 +602,32 @@ async function loadProductsFromSheet(){
     if(newProducts.length > 0){
       PRODUCTS = newProducts;
       console.info(`Almendra Home: ${newProducts.length} productos sincronizados desde Google Sheets.`);
+      window.__syncStatus = {ok:true, count:newProducts.length};
+    } else {
+      window.__syncStatus = {ok:false, error:'La hoja respondió pero no tiene filas válidas (revisá encabezados y precios).'};
     }
   }catch(err){
     console.warn('Almendra Home: no se pudo sincronizar con Google Sheets, se usa el catálogo local.', err);
+    window.__syncStatus = {ok:false, error: (err && err.message) ? err.message : String(err)};
   }
+}
+
+function showSyncBanner(){
+  const s = window.__syncStatus;
+  if(!s) return;
+  const bar = document.createElement('div');
+  bar.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:300;padding:10px 16px;font-size:12px;font-family:Inter,sans-serif;text-align:center;color:white;';
+  if(s.ok){
+    bar.style.background = '#6B7355';
+    bar.textContent = `✅ Sincronizado: ${s.count} productos cargados desde Google Sheets`;
+  } else {
+    bar.style.background = '#a8382a';
+    bar.textContent = `⚠️ Sin sincronizar (mostrando catálogo guardado). Error: ${s.error}`;
+  }
+  bar.style.cursor='pointer';
+  bar.title = 'Tocá para ocultar';
+  bar.onclick = ()=>bar.remove();
+  document.body.appendChild(bar);
 }
 
 const PAYMENT_METHODS = [
@@ -1091,6 +1113,7 @@ function showToast(msg){
   router();
   renderLoginArea();
   renderCartCount();
+  showSyncBanner();
 })();
 </script>
 </body>
