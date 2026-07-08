@@ -799,6 +799,41 @@ function renderCatalog(){
     return;
   }
 
+  // Vista "Todos" sin búsqueda: mostrar solo Novedades (2 productos por categoría)
+  // en vez de apilar las categorías completas.
+  if(state.category === 'Todos' && !term){
+    const allCats = [...new Set(PRODUCTS.map(p=>p.category))];
+    const newest = allCats.flatMap(cat => PRODUCTS.filter(p=>p.category===cat).slice(-2));
+
+    main.innerHTML = `
+      <section class="section" id="Nuevos">
+        <div class="section-head">
+          <h2>Novedades</h2>
+          <span class="count-tag">Recién llegados, 2 de cada categoría</span>
+        </div>
+        <div class="grid">
+          ${newest.map(cardHTML).join('')}
+        </div>
+        <p style="text-align:center;margin-top:28px;font-size:14px;color:rgba(61,47,38,0.6);">
+          ¿Buscás algo puntual? Elegí una categoría en el menú "Productos" de arriba para ver el catálogo completo.
+        </p>
+      </section>
+    `;
+
+    main.querySelectorAll('[data-add]').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        addToCart(parseInt(btn.dataset.add));
+      });
+    });
+    main.querySelectorAll('[data-view]').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        window.location.hash = '#producto/' + card.dataset.view;
+      });
+    });
+    return;
+  }
+
   const cats = state.category==='Todos' ? [...new Set(list.map(p=>p.category))] : [state.category];
 
   main.innerHTML = cats.map(cat=>{
